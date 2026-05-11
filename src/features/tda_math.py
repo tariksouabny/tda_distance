@@ -20,11 +20,9 @@ def get_distance_matrix(data_df, target_date, lookback=40, save_path="data/proce
         end_idx = data_df.index.get_loc(target_date)
     except KeyError:
         end_idx = data_df.index.get_indexer([pd.to_datetime(target_date)], method='ffill')[0]
-
     start_idx = end_idx - lookback
     if start_idx < 0:
         raise ValueError("ERROR: Not enough historical data to present a lookback window")
-
     window_data = data_df.iloc[start_idx:end_idx]
     corr_matrix = window_data.corr(method='pearson').to_numpy()
     dist_matrix = np.sqrt(np.clip(2*(1-corr_matrix),0,4))

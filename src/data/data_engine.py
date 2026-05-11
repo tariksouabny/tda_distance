@@ -5,20 +5,17 @@ import numpy as np
 import persim
 import matplotlib.pyplot as plt
 import io
-# tarik souabny
-'''
-Notes:
- * source is yfinance, adj. closing prices.
-    - then calc. the returns
- * transforms the rolling correlation matix onto strict
- distance matrix for target date
- * file as SCRIPT to __init__
-'''
+import os
+from urllib.request import Request, urlopen
+from src.utils.logger import get_logger
 
-## data acquisition ##
-def get_sp500_tickers():
-    from urllib.request import Request, urlopen
-    print("Scraping S&P500 Off Wikipedia")
+logger = get_logger(__name__)
+def get_sp500_tickers(filepath="data/external/sp500_tickers.csv"):
+    os.makedirs(os.path.dirname(filepath),exist_ok=True)
+    if os.path.exists(filepath):
+        logger.info("Loading S&P 500 price history from local cache (data/external/)")
+        return pd.read_csv(filepath)['Symbol'].toList()
+    logger.info("Scraping S&P500 Off Wikipedia")
     url_sp = "https://en.wikipedia.org/wiki/List_of_S%26P_500_companies"
     req = Request(
         url=url_sp, 
@@ -28,53 +25,27 @@ def get_sp500_tickers():
     tables = pd.read_html(io.StringIO(html))
     df=tables[0]
     tickers = df['Symbol'].str.replace('.', '-', regex=False).tolist()
-    print(f"Successfully scraped {len(tickers)} tickers.")
+    df[['Symbol','Security']].to_csv(filepath, index=False)
+    logger.info(f"Successfully saved S&P data")
+    logger.info(f"Successfully scraped {len(tickers)} tickers.")
     return tickers
 
-def get_data_df(tickers, start_date="2018-01-01", end_date="2024-01-01"):
+def get_data_df(tickers, start_date="`2018-01-01", end_date="2024-01-01", filepath="data/raw/sp500_raw_prices.csv"):
+    os.makedirs(os.path.dirname(filepath), exist_ok=True)
+    if os.path.exists(filepath):
+        print("Loading S&P 500 price history from local cache (data/raw/)...")
+        df = pd.read_csv(filepath, index_col=0, parse_dates=True)
+        return df.loc[start_date:end_date]
     print(f"Downloading data for {len(tickers)} assets")
     raw = yf.download(tickers, start=start_date, end=end_date)
     if 'Close' in raw.columns.get_level_values(0):
         data = raw.xs('Close', level=0, axis=1)
     else:
         data = raw['Close']
-
     print("\nCOLUMNS RETURNED:\n", data.columns)
     data_df = data.pct_change().iloc[1:].dropna(axis=1)
     print(f"Data downloaded from get_data_df(). Shape: {data_df.shape}")
     return data_df
-
-
-# pass to strict dist. matrix for target date #
-def get_distance_matrix(data_df, target_date, lookback=40):
-    '''
-    - the idea is to get the distance between two points in a metric space
-    - but standard correlation not metric space pearson correlation coefficcient is NOT viable because:
-        - for two stocks x, y stocks ∈ n-space, if we normalize, Pearson corr coeff 
-        corr coeff ρ relates to the angle θ between X and Y as
-                (1)     ρ = cos(θ)
-        where ρ = 1 means x,y point in same directions, ρ=0 means x,y point in opposite directions, ρ=-1 means x,y point in opposite directions
-        - the distance d, between x, is related as
-                        d**2 = ||u||**2 + ||v||**2 - 2||u||||v||cos(θ)
-                             = 1**2 + 1**2 - 2(1)(1)cos(θ)
-                             = 2(1-cos(θ))
-                (2) ⇒  d  =  sqrt(2(1-ρ))
-    '''
-    try:
-        end_idx = data_df.index.get_loc(target_date)
-    except KeyError:
-        end_idx = data_df.index.get_indexer([pd.to_datetime(target_date)], method='ffill')[0]
-
-    start_idx = end_idx - lookback
-    if start_idx < 0:
-        raise ValueError("ERROR: Not enough historical data to present a lookback window")
-
-    window_data = data_df.iloc[start_idx:end_idx]
-    corr_matrix = window_data.corr(method='pearson').to_numpy()
-    dist_matrix = np.sqrt(np.clip(2*(1-corr_matrix),0,4))
-    np.fill_diagonal(dist_matrix,0)
-    return dist_matrix
-
 
 # exec & testing #
 if __name__ == "__main__":

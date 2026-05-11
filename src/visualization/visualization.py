@@ -3,7 +3,8 @@ import kmapper as km
 from sklearn.cluster import DBSCAN
 from sklearn.manifold import MDS
 import numpy as np
-
+from src.utils.logger import get_logger
+logger = get_logger(__name__)
 def generate_mapper_graph(window_data, distance_matrix, tickers, output_filename="market_map.html"):
     stock_data=window_data.T.to_numpy()
     os.makedirs(os.path.dirname(output_filename), exist_ok=True)
@@ -22,4 +23,4 @@ def generate_mapper_graph(window_data, distance_matrix, tickers, output_filename
         title="S&P 500 Vietoris-Rips Correlation Metric Space",
         custom_tooltips=np.array(tickers)
     )
-    print(f"Success: graph saved. Open '{output_filename} in your web browser")
+    logger.info(f"Success: graph saved. Open '{output_filename} in your web browser")

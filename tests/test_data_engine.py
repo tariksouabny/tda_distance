@@ -1,9 +1,10 @@
 import unittest
-import pandas as np
+import pandas as pd
 import os
 import shutil
 
 from src.data.data_engine import get_sp500_tickers, get_data_df
+
 class TestDataEngine(unittest.TestCase):
     def setUp(self):
         self.test_dir = "data/test_temp"
@@ -21,7 +22,6 @@ class TestDataEngine(unittest.TestCase):
         self.assertIsInstance(df, pd.DataFrame)
         self.assertFalse(df.empty)
         self.assertTrue(os.path.exists(test_path))
-
     def tearDown(self):
         if os.path.exists(self.test_dir):
             shutil.rmtree(self.test_dir)
