@@ -28,6 +28,6 @@ def get_distance_matrix(data_df, target_date, lookback=40, save_path="data/proce
     window_data = data_df.iloc[start_idx:end_idx]
     corr_matrix = window_data.corr(method='pearson').to_numpy()
     dist_matrix = np.sqrt(np.clip(2*(1-corr_matrix),0,4))
-    dist_matrix.to_csv(save_path)
+    pd.DataFrame(dist_matrix, index=window_data.columns, columns=window_data.columns).to_csv(save_path)
     np.fill_diagonal(dist_matrix,0)
     return dist_matrix
