@@ -29,3 +29,31 @@ Computing Persistent Homology...
 2026-05-11 18:28:51 - INFO - [visualization] - Success: graph saved. Open 'outputs/figures/sp500_topology_2020-04-19.html in your web browser
 2026-05-11 18:28:52 - INFO - [main] - 
 --- Pipeline Complete! ---
+2026-07-23 14:26:22 - INFO - [main] - --- Starting S&P 500 TDA Pipeline ---
+2026-07-23 14:26:22 - INFO - [data_engine] - Loading S&P 500 price history from local cache (data/external/)
+2026-07-23 14:26:42 - INFO - [main] - 
+Calculating distance matrix for 2020-04-19...
+2026-07-23 14:26:42 - INFO - [main] - 
+Computing Persistent Homology...
+2026-07-23 14:26:42 - INFO - [main] - Plotting Persistence Diagram...
+2026-07-23 14:26:50 - INFO - [visualization] - Success: graph saved. Open outputs/figures/sp500_topology_2020-04-19.html in your web browser
+2026-07-23 14:26:50 - INFO - [main] - 
+--- Pipeline Complete! ---
+2026-07-23 14:55:13 - INFO - [main] - --- Starting S&P 500 TDA Pipeline ---
+2026-07-23 14:55:13 - INFO - [data_engine] - Loading S&P 500 price history from local cache (data/external/)
+2026-07-23 14:55:13 - INFO - [data_engine] - Downloading data for 503 assets
+2026-07-23 14:55:30 - INFO - [data_engine] - 
+COLUMNS RETURNED:
+Index(['A', 'AAPL', 'ABBV', 'ABNB', 'ABT', 'ACGL', 'ACN', 'ADBE', 'ADI', 'ADM',
+       ...
+       'WY', 'WYNN', 'XEL', 'XOM', 'XYL', 'XYZ', 'YUM', 'ZBH', 'ZBRA', 'ZTS'],
+      dtype='str', name='Ticker', length=503)
+2026-07-23 14:55:30 - INFO - [data_engine] - Data downloaded from get_data_df(). Shape: (542, 473)
+2026-07-23 14:55:30 - INFO - [main] - 
+Calculating distance matrix for 2020-04-19...
+2026-07-23 14:55:31 - INFO - [main] - 
+Computing Persistent Homology...
+2026-07-23 14:55:31 - INFO - [main] - Plotting Persistence Diagram...
+2026-07-23 14:55:33 - INFO - [visualization] - Success: graph saved. Open 'outputs/figures\sp500_topology_2020-04-19.html' in your web browser
+2026-07-23 14:55:33 - INFO - [main] - 
+--- Pipeline Complete! ---

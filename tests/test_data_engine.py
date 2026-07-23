@@ -14,7 +14,7 @@ class TestDataEngine(unittest.TestCase):
         tickers=get_sp500_tickers(filepath=test_path)
         self.assertIsInstance(tickers, list)
         self.assertGreater(len(tickers), 450)
-        self.AssertTrue(os.path.exists(test_path))
+        self.assertTrue(os.path.exists(test_path))
     def test_get_data_df(self):
         test_path = f"{self.test_dir}/test_prices.csv"
         tickers = ['AAPL', 'MSFT'] # just test 2 stocks to make it fast
